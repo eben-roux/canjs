@@ -5,7 +5,7 @@
 
 Provides or describes a [can.Map] constructor function or `can.Map` instance that will be
 used to retrieve values found in the component's [can.Component::template template]. The map 
-instance is initialized with values specified by the component element's attributes.
+instance is initialized with values specified by attributes set on the component's HTML element.
 
 __Note:__ In 2.1, [can.stache] and [can.mustache] pass values to the
 viewModel differently. To pass data from the viewModel, you must wrap your attribute 
