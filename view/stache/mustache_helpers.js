@@ -98,25 +98,29 @@ steal("can/util", "./utils.js","can/view/live",function(can, utils, live){
 		},
 		'is': function() {
 			var lastValue, curValue,
-				options = arguments[arguments.length - 1];
+			options = arguments[arguments.length - 1];
 
 			if (arguments.length - 2 <= 0) {
 				return options.inverse();
 			}
 
-			for (var i = 0; i < arguments.length - 1; i++) {
-				curValue = resolve(arguments[i]);
-				curValue = can.isFunction(curValue) ? curValue() : curValue;
+			var args = arguments;
+			var callFn = can.compute(function(){
+				for (var i = 0; i < args.length - 1; i++) {
+					curValue = resolve(args[i]);
+					curValue = can.isFunction(curValue) ? curValue() : curValue;
 
-				if (i > 0) {
-					if (curValue !== lastValue) {
-						return options.inverse();
+					if (i > 0) {
+						if (curValue !== lastValue) {
+							return false;
+						}
 					}
+					lastValue = curValue;
 				}
-				lastValue = curValue;
-			}
+				return true;
+			});
 
-			return options.fn();
+			return callFn() ? options.fn() : options.inverse();
 		},
 		'eq': function() {
 			return helpers.is.apply(this, arguments);
@@ -198,7 +202,7 @@ steal("can/util", "./utils.js","can/view/live",function(can, utils, live){
 			}
 		}
 	};
-	
+
 	helpers.eachOf = helpers.each;
 
 	var registerHelper = function(name, callback){
@@ -211,7 +215,7 @@ steal("can/util", "./utils.js","can/view/live",function(can, utils, live){
 			registerHelper(name, can.view.simpleHelper(callback));
 		},
 		getHelper: function(name, options){
-			
+
 			var helper = options && options.get("helpers." + name,{proxyMethods: false});
 			if(!helper) {
 				helper = helpers[name];
