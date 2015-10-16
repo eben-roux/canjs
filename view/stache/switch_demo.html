@@ -1,0 +1,45 @@
+<script type="text/stache" id="template">
+<ul class="nav">
+    <li>
+        <a can-href="{page='home'}" class="{{#eq page 'home'}}active{{/eq}}">Home</a>
+    </li>
+    <li>
+        <a can-href="{page='users'}" class="{{#eq page 'users'}}active{{/eq}}">Users</a>
+    </li>
+</ul>
+<div class="content">
+{{#switch page}}
+    {{#case 'home'}}
+        <h1>Home</h1>
+    {{/case}}
+    {{#case 'users'}}
+        {{#if slug}}
+            <h1>User and Slug</h1>
+        {{else}}
+            <h1>User</h1>
+        {{/if}}
+    {{/case}}
+		{{#default}}
+			<h1>Nothing</h1>
+		{{/default}}
+{{/switch}}
+</div>
+</script>
+<script src="../../node_modules/steal/steal.js">
+import can from 'can/';
+import route from 'can/route/';
+import $ from 'jquery';
+import 'can/view/stache/';
+
+var appTemplate = can.view("template");
+
+var AppState = can.Map.extend({});
+var app = new AppState();
+
+route(':page', { page: 'home' });
+route(':page/:slug', { slug: null });
+can.route.map(app);
+can.route.ready();
+
+$('body').append(appTemplate(app));
+</script>
